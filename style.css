@@ -3,6 +3,7 @@ body {
     max-width: 600px;
     margin: auto;
     padding:1rem;
+    background-color: aqua;
 }
 input {
     margin:0.5rem 0;
