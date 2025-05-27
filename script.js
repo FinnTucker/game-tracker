@@ -64,11 +64,16 @@ function saveGames() {
 // Display games on the page
 function renderGames(gamesToRender = games) {
   list.innerHTML = ""; // clear the list
+  // iterate through the games array
   gamesToRender.forEach((game, index) => {
+    // create a list element
     const li = document.createElement("li");
+    // set the text content of the object
     li.textContent = `${game.title} (${game.platform})`;
 
+    // create a delete button for each game
     const delButton = document.createElement("button");
+    // set text content of button
     delButton.textContent = "Delete";
     delButton.onclick = () => {
       const gameIndex = games.findIndex(g => g.title === game.title && g.platform === game.platform);
@@ -76,8 +81,9 @@ function renderGames(gamesToRender = games) {
       saveGames();
       renderGames();
     };
-
+    // add delete button to li object
     li.appendChild(delButton);
+    // add li object to list
     list.appendChild(li);
   });
 }
