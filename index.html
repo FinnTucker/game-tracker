@@ -8,14 +8,18 @@
     </head>
     <body>
         <h1>Game Tracker</h1>
+        <h2> Search </h2>
         <div id="search">
             <input type="text" id="search-input" placeholder="Search for a game"/>
         </div>
+        <h2> Add A Game </h2>
         <form id="game-form">
             <input type="text" id="title" placeholder="Game title" required/>
             <input type="text" id="platform" placeholder="Platform" />
+            <input type="checkbox" id="checkbox-result"/>
             <button type="submit">Add Game</button>
         </form>
+
         <ul id="game-list"></ul>
 
         <script src="script.js"></script>

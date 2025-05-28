@@ -1,12 +1,16 @@
 const form = document.getElementById("game-form");
 const list = document.getElementById("game-list");
 const searchInput = document.getElementById("search-input");
+const checkboxResult = document.getElementById("checkbox-result")
 
 let games = [];
 
 // Load saved games from localStorage
+// onload happens as soon as the object is loaded
 window.onload = () => {
+  // retrieve games array from local storage
   const savedGames = localStorage.getItem("games");
+  // if the array exists, stringify it
   if (savedGames) {
     games = JSON.parse(savedGames);
     renderGames();
@@ -30,7 +34,6 @@ searchInput.addEventListener("input", (e) => {
   renderGames(filteredGames);
 });
 
-
 // Listen for submit events on the form
 form.addEventListener("submit", (e) => {
   e.preventDefault(); // Prevent the form from submitting and reloading the page
@@ -38,9 +41,9 @@ form.addEventListener("submit", (e) => {
   // Get the values input by the user for game title and platform
   const title = document.getElementById("title").value;
   const platform = document.getElementById("platform").value;
-
+  
   // Create a game object using the title and platform
-  const game = { title, platform }; // (Not a tuple — this is an object)
+  const game = { title, platform, checkboxResult };
 
   // Add the new game to the games array
   games.push(game);
@@ -69,10 +72,15 @@ function renderGames(gamesToRender = games) {
     // create a list element
     const li = document.createElement("li");
     // set the text content of the object
-    li.textContent = `${game.title} (${game.platform})`;
+    
+    li.textContent = `${game.title}`;
 
     // create a delete button for each game
     const delButton = document.createElement("button");
+    const gamePlatform = document.createElement("li");
+
+    gamePlatform.textContent = `${game.platform}`;
+    li.appendChild(gamePlatform);
     // set text content of button
     delButton.textContent = "Delete";
     delButton.onclick = () => {
