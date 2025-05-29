@@ -83,6 +83,8 @@ document.getElementById("rawg-api-search").addEventListener("submit", (e) => {
       <h3>${game.name}</h3>
       <img src="${game.background_image}" alt="${game.name} cover" width="200"/>
       <p>Released: ${game.released || "N/A"}</p>
+      <p>Metacritic: ${game.metacritic !== null ? game.metacritic : "N/A"}</p>
+      <p>Platforms: ${game.parent_platforms ? game.parent_platforms.map(p => p.platform.name).join(", ") : "N/A"}</p>
       <button>Add to My List</button>
       `;
       resultsContainer.appendChild(gameDiv);
