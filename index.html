@@ -12,7 +12,9 @@
         <nav>
             <button id="view-list">View Games</button>
             <button id="add-game">Add Game</button>
+            <button id="add-game-from-API">Query RAWG Database</button>
         </nav>
+
     <div id="add-game-section" style="display:block">
         <h2> Add A Game </h2>
             <form id="game-form">
@@ -24,6 +26,26 @@
                 <button type="submit">Add Game</button>
             </form>
     </div>
+
+    <div id="query-database" style="display:block">
+        <h2>Search The Database</h2>
+        <div>
+        <form id="rawg-api-search">
+            <input type="text" id="game-search" placeholder="Game Title" required/>
+            <select name="platforms" id="platforms">
+                <option value="Sony">Sony</option>
+                <option value="PC">PC</option>
+                <option value="Nintendo">Nintendo</option>
+            </select>
+            <button type ="submit">Search</button>
+        </form>
+        </div>
+        <div id="search-results">
+            <h3>Search Results</h3>
+            <ul id="api-search-results"></ul>
+        </div>
+    </div>
+
 <div id="game-list-section" style="display: none;">
     <h2> Search </h2>
     <input type="text" id="search-input" placeholder="Search for a game"/>

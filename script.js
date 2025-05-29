@@ -5,12 +5,7 @@ const searchInput = document.getElementById("search-input");
 const checkboxResult = document.getElementById("checkbox-result");
 const rating = document.getElementById("rating");
 const review = document.getElementById("review");
-
-
-
-const url = `https://api.rawg.io/api/games?key=${API_KEY}&dates=2022-01-01,2024-01-01&ordering=-added`;
-
-console.log(url, "check")
+const gameSearch = document.getElementById("game-search")
 
 let games = [];
 let nextGameListUrl = null;
@@ -20,9 +15,16 @@ function loadGames(url)
   fetch(url)
     .then(response => response.json())
     .then(data=> {
-      console.log(data)
+      const results = data.results;
+      results.forEach(game => {
+        console.log(game.name);
+        console.log(game.background_image);
+      });
 
     })
+    .catch(error => {
+      console.error("Error fetching data:", error);
+});
 }
 
 // Load saved games from localStorage
@@ -30,7 +32,6 @@ function loadGames(url)
 window.onload = () => {
   // retrieve games array from local storage
   const savedGames = localStorage.getItem("games");
-  loadGames(url);
   // if the array exists, stringify it
   if (savedGames) {
     games = JSON.parse(savedGames);
@@ -58,6 +59,36 @@ searchInput.addEventListener("input", (e) => {
 
   // Re-render the list using the filtered games
   renderGames(filteredGames);
+});
+
+document.getElementById("rawg-api-search").addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const title = document.getElementById("game-search").value.trim();
+  const platform = document.getElementById("platforms").value;
+  const url = `https://api.rawg.io/api/games?key=${API_KEY}&search=${encodeURIComponent(title)}`;
+  console.log("API URL: ", url);
+  // fetch data from the API
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      console.log("results from RAWG:", data.results);
+      const resultsContainer = document.getElementById("search-results");
+      resultsContainer.innerHTML="";
+      data.results.forEach(game => {
+      const gameDiv = document.createElement("div");
+      gameDiv.className = "game-result";
+
+      gameDiv.innerHTML=`
+      <h3>${game.name}</h3>
+      <img src="${game.background_image}" alt="${game.name} cover" width="200"/>
+      <p>Released: ${game.released || "N/A"}</p>
+      <button>Add to My List</button>
+      `;
+      resultsContainer.appendChild(gameDiv);
+    });
+    })
+    .catch(err => console.error("Error fetching from RAWG API:", err));
 });
 
 // Listen for submit events on the form
@@ -127,14 +158,26 @@ function renderGames(gamesToRender = games) {
     list.appendChild(li);
   });
 }
+
+
+
 //show the list of games in localStorage, hide the 'add a game' section
 document.getElementById("view-list").addEventListener("click", () => {
   document.getElementById("game-list-section").style.display="block";
   document.getElementById("add-game-section").style.display="none";
+  document.getElementById("query-database").style.display="none";
 });
 
 //show the 'add a game' section, hide the list of games in localStorage
 document.getElementById("add-game").addEventListener("click", () => {
   document.getElementById("add-game-section").style.display="block";
   document.getElementById("game-list-section").style.display="none";
+  document.getElementById("query-database").style.display="none";
 });
+
+//show the 'query RAWG database' section, hide the other sections
+document.getElementById("add-game-from-API").addEventListener("click", () => {
+  document.getElementById("add-game-section").style.display="none";
+  document.getElementById("game-list-section").style.display="none";
+  document.getElementById("query-database").style.display="block";
+})
