@@ -1,21 +1,47 @@
+const API_KEY = "ca5f2915d47a49ca9843722b14036a72"
 const form = document.getElementById("game-form");
 const list = document.getElementById("game-list");
 const searchInput = document.getElementById("search-input");
-const checkboxResult = document.getElementById("checkbox-result")
+const checkboxResult = document.getElementById("checkbox-result");
+const rating = document.getElementById("rating");
+const review = document.getElementById("review");
+
+
+
+const url = `https://api.rawg.io/api/games?key=${API_KEY}&dates=2022-01-01,2024-01-01&ordering=-added`;
+
+console.log(url, "check")
 
 let games = [];
+let nextGameListUrl = null;
+
+function loadGames(url)
+{
+  fetch(url)
+    .then(response => response.json())
+    .then(data=> {
+      console.log(data)
+
+    })
+}
 
 // Load saved games from localStorage
 // onload happens as soon as the object is loaded
 window.onload = () => {
   // retrieve games array from local storage
   const savedGames = localStorage.getItem("games");
+  loadGames(url);
   // if the array exists, stringify it
   if (savedGames) {
     games = JSON.parse(savedGames);
     renderGames();
   }
 };
+
+document.getElementById("view-list").addEventListener("click", () => {
+  document.getElementById("game-list-section").style.display = "block";
+  document.getElementById("add-game-section").style.display = "none";
+});
 
 // Listen for input events on the search field
 searchInput.addEventListener("input", (e) => {
@@ -43,7 +69,12 @@ form.addEventListener("submit", (e) => {
   const platform = document.getElementById("platform").value;
   
   // Create a game object using the title and platform
-  const game = { title, platform, checkboxResult };
+  const game = { 
+    title, 
+    platform, 
+    rating: rating.value,
+    review: review.value
+  };
 
   // Add the new game to the games array
   games.push(game);
@@ -66,25 +97,26 @@ function saveGames() {
 
 // Display games on the page
 function renderGames(gamesToRender = games) {
-  list.innerHTML = ""; // clear the list
+  list.innerHTML='';
   // iterate through the games array
   gamesToRender.forEach((game, index) => {
     // create a list element
     const li = document.createElement("li");
     // set the text content of the object
     
-    li.textContent = `${game.title}`;
+  li.innerHTML = `
+  <strong>${game.title}</strong> (${game.platform})<br/>
+  My Rating: ${game.rating}/5 &#127775<br/>
+  My Review: ${game.review} 
+  `;
 
     // create a delete button for each game
     const delButton = document.createElement("button");
     const gamePlatform = document.createElement("li");
 
-    gamePlatform.textContent = `${game.platform}`;
-    li.appendChild(gamePlatform);
     // set text content of button
     delButton.textContent = "Delete";
     delButton.onclick = () => {
-      const gameIndex = games.findIndex(g => g.title === game.title && g.platform === game.platform);
       games.splice(index, 1);
       saveGames();
       renderGames();
@@ -95,3 +127,14 @@ function renderGames(gamesToRender = games) {
     list.appendChild(li);
   });
 }
+//show the list of games in localStorage, hide the 'add a game' section
+document.getElementById("view-list").addEventListener("click", () => {
+  document.getElementById("game-list-section").style.display="block";
+  document.getElementById("add-game-section").style.display="none";
+});
+
+//show the 'add a game' section, hide the list of games in localStorage
+document.getElementById("add-game").addEventListener("click", () => {
+  document.getElementById("add-game-section").style.display="block";
+  document.getElementById("game-list-section").style.display="none";
+});

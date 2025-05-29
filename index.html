@@ -8,19 +8,27 @@
     </head>
     <body>
         <h1>Game Tracker</h1>
-        <h2> Search </h2>
-        <div id="search">
-            <input type="text" id="search-input" placeholder="Search for a game"/>
-        </div>
+        <p>This is a place to keep track of games played and my thoughts.</p>
+        <nav>
+            <button id="view-list">View Games</button>
+            <button id="add-game">Add Game</button>
+        </nav>
+    <div id="add-game-section" style="display:block">
         <h2> Add A Game </h2>
-        <form id="game-form">
-            <input type="text" id="title" placeholder="Game title" required/>
-            <input type="text" id="platform" placeholder="Platform" />
-            <input type="checkbox" id="checkbox-result"/>
-            <button type="submit">Add Game</button>
-        </form>
-
-        <ul id="game-list"></ul>
+            <form id="game-form">
+                <input type="text" id="title" placeholder="Game title" required/>
+                <input type="text" id="platform" placeholder="Platform" />
+                <input type="number" id="rating" min="1" max="5" placeholder="Rating (1-5)"/>
+                <textarea id="review" placeholder="Write a short review..."></textarea>
+                <input type="checkbox" id="checkbox-result"/>
+                <button type="submit">Add Game</button>
+            </form>
+    </div>
+<div id="game-list-section" style="display: none;">
+    <h2> Search </h2>
+    <input type="text" id="search-input" placeholder="Search for a game"/>
+    <ul id="game-list"></ul>
+</div>
 
         <script src="script.js"></script>
     </body>
