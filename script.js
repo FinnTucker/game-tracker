@@ -75,23 +75,66 @@ document.getElementById("rawg-api-search").addEventListener("submit", (e) => {
       console.log("results from RAWG:", data.results);
       const resultsContainer = document.getElementById("search-results");
       resultsContainer.innerHTML="";
-      data.results.forEach(game => {
+
+
+      data.results.forEach((game, index) => {
       const gameDiv = document.createElement("div");
       gameDiv.className = "game-result";
 
+      const platformList = game.parent_platforms 
+        ? game.parent_platforms.map(p => p.platform.name)
+        : [];
+
       gameDiv.innerHTML=`
       <h3>${game.name}</h3>
-      <img src="${game.background_image}" alt="${game.name} cover" width="200"/>
+      <img src="${game.background_image}" alt="${game.name} cover" width="300"/>
       <p>Released: ${game.released || "N/A"}</p>
       <p>Metacritic: ${game.metacritic !== null ? game.metacritic : "N/A"}</p>
-      <p>Platforms: ${game.parent_platforms ? game.parent_platforms.map(p => p.platform.name).join(", ") : "N/A"}</p>
-      <button>Add to My List</button>
+      <p>Platforms: ${platformList.join(", ")}</p>
+      <button class='add-from-api'
+        data-title='${game.name}'
+        data-img="${game.background_image}"
+        data-platform='${JSON.stringify(platformList)}'
+        data-metacritic="${game.metacritic !== null ? game.metacritic : 'N/A'}"
+        >Add to My List</button>
       `;
       resultsContainer.appendChild(gameDiv);
+      console.log(gameDiv)
     });
     })
     .catch(err => console.error("Error fetching from RAWG API:", err));
 });
+
+
+document.getElementById("search-results").addEventListener("click", (e) => {
+  if (e.target.classList.contains("add-from-api")) {
+    const title = e.target.dataset.title;
+    const platform = JSON.parse(e.target.dataset.platform);
+    const metacritic = e.target.dataset.metacritic;
+    const background_image = e.target.dataset.img;
+
+    console.log(title);
+    console.log(metacritic);
+    console.log(platform)
+    console.log(background_image)
+
+
+    const newGame = {
+      title,
+      background_image,
+      platform: platform.join(", "),
+      rating: "Not rated yet",
+      review: "Not reviewed yet",
+      metacritic: metacritic
+    };
+    games.push(newGame);
+    saveGames();
+    renderGames();
+
+    alert(`"${title}" was added to your list.`)
+  }
+})
+
 
 // Listen for submit events on the form
 form.addEventListener("submit", (e) => {
@@ -139,8 +182,10 @@ function renderGames(gamesToRender = games) {
     
   li.innerHTML = `
   <strong>${game.title}</strong> (${game.platform})<br/>
+  ${game.background_image ? `<img src="${game.background_image}" alt="${game.title} cover" width="300"/>` : ""}<br/>
   My Rating: ${game.rating}/5 &#127775<br/>
-  My Review: ${game.review} 
+  My Review: ${game.review} <br/>
+  Metascore: ${game.metacritic} <br/>
   `;
 
     // create a delete button for each game
