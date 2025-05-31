@@ -219,12 +219,25 @@ function renderGames(gamesToRender = games) {
     const detailsButton = createdetailsButton();
     var modal = document.getElementById("edit-modal");
     var span = document.getElementsByClassName("close")[0];
+
     detailsButton.onclick = function() {
+      document.getElementById("modal-title").textContent=game.title;
+      document.getElementById("modal-platform").textContent=game.platform;
+      document.getElementById("modal-metascore").textContent=game.metacritic;
+      const modalImage = document.getElementById("modal-image");
+      if (game.background_image) {
+        modalImage.src = game.background_image;
+        modalImage.alt = `${game.title} cover`;
+        modalImage.style.display="block";
+      } else {
+        modalImage.style.display="none";
+      }
       modal.style.display="block";
     }
     span.onclick = function() {
       modal.style.display="none";
     }
+
     li.appendChild(detailsButton)
     // add li object to list
     list.appendChild(li);

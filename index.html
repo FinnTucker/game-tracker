@@ -56,10 +56,17 @@
 <div id="edit-modal" class="modal" style="display: none;">
     <div class="modal-content">
         <span class="close">&times;</span>
-        <p>Example Text...</p>
+        <h2 id="modal-title"></h2>
+        <img id="modal-image" width="300"/>
+        <p><strong>Platform: </strong><span id="modal-platform"></span></p>
+        <p><strong>Metascore: </strong><span id="modal-metascore"></span></p>
+        <form id="modal-form">
+            <textarea id="review" placeholder="Write a short review..."></textarea>
+            <button type="submit">Submit Review</button>
+        </form>
+
     </div>
 </div>
-
         <script src="script.js"></script>
     </body>
 </html>
