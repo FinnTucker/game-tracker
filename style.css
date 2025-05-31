@@ -60,12 +60,19 @@ button:hover {
     border: 1px solid red;
 
 }
-#game-list li button {
+#game-list li .remove-button {
     background-color: #e53935;
 }
-#game-list li button:hover {
+#game-list li .remove-button:hover {
     background-color: #c62828;
 }
+#game-list li .details-button {
+    background-color: green;
+}
+#game-list li .details-button:hover {
+    background-color: greenyellow;
+}
+
 #game-list li
 {
     background-color: #f9f9f9;
@@ -83,4 +90,24 @@ button:hover {
     margin-top: 8px;
     font-style: italic;
     color:#555;
+}
+.modal {
+    position: fixed; /* stay in place */
+    z-index: 1;  /* sits on top */
+    left: 0;
+    top: 0;
+    width:100%;  /*full width */
+    height:100%;  /*full height */
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+}
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /*15% from top and centred */
+    padding: 20px;
+    border:1px solid #888;
+    width: 80%;
+
+
 }

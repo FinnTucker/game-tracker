@@ -10,6 +10,18 @@ const gameSearch = document.getElementById("game-search")
 let games = [];
 let nextGameListUrl = null;
 
+// Load saved games from localStorage
+// onload happens as soon as the object is loaded
+window.onload = () => {
+  // retrieve games array from local storage
+  const savedGames = localStorage.getItem("games");
+  // if the array exists, stringify it
+  if (savedGames) {
+    games = JSON.parse(savedGames);
+    renderGames();
+  }
+};
+
 function loadGames(url)
 {
   fetch(url)
@@ -27,24 +39,12 @@ function loadGames(url)
 });
 }
 
-// Load saved games from localStorage
-// onload happens as soon as the object is loaded
-window.onload = () => {
-  // retrieve games array from local storage
-  const savedGames = localStorage.getItem("games");
-  // if the array exists, stringify it
-  if (savedGames) {
-    games = JSON.parse(savedGames);
-    renderGames();
-  }
-};
-
 document.getElementById("view-list").addEventListener("click", () => {
   document.getElementById("game-list-section").style.display = "block";
   document.getElementById("add-game-section").style.display = "none";
 });
 
-// Listen for input events on the search field
+// Listen for input events on the search field in 'add-game-section'
 searchInput.addEventListener("input", (e) => {
   // Get the current input value, trim whitespace, and convert to lowercase
   const query = e.target.value.trim().toLowerCase();
@@ -61,6 +61,7 @@ searchInput.addEventListener("input", (e) => {
   renderGames(filteredGames);
 });
 
+// display rawg api search results
 document.getElementById("rawg-api-search").addEventListener("submit", (e) => {
   e.preventDefault();
 
@@ -77,7 +78,7 @@ document.getElementById("rawg-api-search").addEventListener("submit", (e) => {
       resultsContainer.innerHTML="";
 
 
-      data.results.forEach((game, index) => {
+      data.results.forEach((game) => {
       const gameDiv = document.createElement("div");
       gameDiv.className = "game-result";
 
@@ -91,6 +92,7 @@ document.getElementById("rawg-api-search").addEventListener("submit", (e) => {
       <p>Released: ${game.released || "N/A"}</p>
       <p>Metacritic: ${game.metacritic !== null ? game.metacritic : "N/A"}</p>
       <p>Platforms: ${platformList.join(", ")}</p>
+
       <button class='add-from-api'
         data-title='${game.name}'
         data-img="${game.background_image}"
@@ -105,7 +107,7 @@ document.getElementById("rawg-api-search").addEventListener("submit", (e) => {
     .catch(err => console.error("Error fetching from RAWG API:", err));
 });
 
-
+//add item from api search to user list
 document.getElementById("search-results").addEventListener("click", (e) => {
   if (e.target.classList.contains("add-from-api")) {
     const title = e.target.dataset.title;
@@ -133,7 +135,7 @@ document.getElementById("search-results").addEventListener("click", (e) => {
 
     alert(`"${title}" was added to your list.`)
   }
-})
+});
 
 
 // Listen for submit events on the form
@@ -165,10 +167,26 @@ form.addEventListener("submit", (e) => {
   form.reset();
 });
 
-
 // Save to localStorage
 function saveGames() {
   localStorage.setItem("games", JSON.stringify(games));
+}
+
+function createDelButton()
+{
+  // create a delete button for game elements in the list
+    const delButton = document.createElement("button");
+    // set text content of button
+    delButton.textContent = "Delete";
+    delButton.classList.add("remove-button");
+    return delButton;
+}
+function createdetailsButton()
+{
+ const detailsButton = document.createElement("button");   
+ detailsButton.textContent= "Details";
+ detailsButton.classList.add("details-button");
+ return detailsButton;
 }
 
 // Display games on the page
@@ -189,11 +207,7 @@ function renderGames(gamesToRender = games) {
   `;
 
     // create a delete button for each game
-    const delButton = document.createElement("button");
-    const gamePlatform = document.createElement("li");
-
-    // set text content of button
-    delButton.textContent = "Delete";
+    const delButton = createDelButton();
     delButton.onclick = () => {
       games.splice(index, 1);
       saveGames();
@@ -201,11 +215,21 @@ function renderGames(gamesToRender = games) {
     };
     // add delete button to li object
     li.appendChild(delButton);
+
+    const detailsButton = createdetailsButton();
+    var modal = document.getElementById("edit-modal");
+    var span = document.getElementsByClassName("close")[0];
+    detailsButton.onclick = function() {
+      modal.style.display="block";
+    }
+    span.onclick = function() {
+      modal.style.display="none";
+    }
+    li.appendChild(detailsButton)
     // add li object to list
     list.appendChild(li);
   });
 }
-
 
 
 //show the list of games in localStorage, hide the 'add a game' section

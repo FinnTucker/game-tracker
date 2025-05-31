@@ -27,7 +27,7 @@
             </form>
     </div>
 
-    <div id="query-database" style="display:block">
+    <div id="query-database" style="display:none">
         <h2>Search The Database</h2>
         <div>
         <form id="rawg-api-search">
@@ -49,7 +49,15 @@
 <div id="game-list-section" style="display: none;">
     <h2> Search </h2>
     <input type="text" id="search-input" placeholder="Search for a game"/>
+    <h2>My Games</h2>
     <ul id="game-list"></ul>
+</div>
+
+<div id="edit-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <p>Example Text...</p>
+    </div>
 </div>
 
         <script src="script.js"></script>
