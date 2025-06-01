@@ -61,6 +61,9 @@ searchInput.addEventListener("input", (e) => {
   renderGames(filteredGames);
 });
 
+//populate review data in modal
+document.getElementById("")
+
 // display rawg api search results
 document.getElementById("rawg-api-search").addEventListener("submit", (e) => {
   e.preventDefault();
@@ -95,23 +98,30 @@ function createGameResultElement(game) {
   const gameDiv = document.createElement("div");
   gameDiv.className = "game-result";
 
+  const genreList = game.genres
+    ? game.genres.map(g => g.name) 
+    : [];
+  console.log(genreList)
   const platformList = game.parent_platforms
     ? game.parent_platforms.map(p => p.platform.name)
     : [];
+
     gameDiv.innerHTML=`
     <h3>${game.name}</h3>
     <img src="${game.background_image}" alt="${game.name} cover" width="300"/>
     <p>Released: ${game.released || "N/A"}</p>
     <p>Metacritic: ${game.metacritic !== null ? game.metacritic : "N/A"}</p>
     <p>Platforms: ${platformList.join(", ")}</p>
-
-    <button class='add-from-api'
-      data-title='${game.name}'
-      data-img="${game.background_image}"
-      data-platform='${JSON.stringify(platformList)}'
-      data-metacritic="${game.metacritic !== null ? game.metacritic : 'N/A'}"
-      >Add to My List</button>
-    `;    
+    <p>Genres: ${genreList.join(", ")}</p>
+    <button class="add-from-api">Add to My List</button>
+    `
+    const button = gameDiv.querySelector(".add-from-api");
+    button.setAttribute("data-title", game.name);
+    button.setAttribute("data-img", game.background_image);
+    button.setAttribute("data-platform", JSON.stringify(platformList));
+    button.setAttribute("data-metacritic", game.metacritic !== null ? game.metacritic : "N/A");
+    button.setAttribute("data-genre", JSON.stringify(genreList));
+  
   return gameDiv;
 }
 
@@ -127,11 +137,13 @@ document.getElementById("search-results").addEventListener("click", (e) => {
     const platform = JSON.parse(e.target.dataset.platform);
     const metacritic = e.target.dataset.metacritic;
     const background_image = e.target.dataset.img;
+    const genre = JSON.parse(e.target.dataset.genre);
 
     console.log(title);
     console.log(metacritic);
-    console.log(platform)
-    console.log(background_image)
+    console.log(platform);
+    console.log(background_image);
+    console.log(genre);
 
 
     const newGame = {
@@ -140,7 +152,8 @@ document.getElementById("search-results").addEventListener("click", (e) => {
       platform: platform.join(", "),
       rating: "Not rated yet",
       review: "Not reviewed yet",
-      metacritic: metacritic
+      metacritic: metacritic,
+      genre: genre.join(", ")
     };
     games.push(newGame);
     saveGames();
@@ -163,7 +176,8 @@ form.addEventListener("submit", (e) => {
     title, 
     platform, 
     rating: rating.value,
-    review: review.value
+    review: review.value,
+    genre
   };
 
   // Add the new game to the games array
@@ -203,6 +217,7 @@ function createGameListItem(game) {
   My Rating: ${game.rating}/5 &#127775<br/>
   My Review: ${game.review} <br/>
   Metascore: ${game.metacritic} <br/>
+  Genres: ${game.genre || "N/A"} <br/>
   `;
   return li;
 }

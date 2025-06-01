@@ -112,3 +112,21 @@ button:hover {
     width: 80%;
 
 }
+#query-database #search-results {
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding:1rem;
+    border: 2px dashed blue;
+}
+
+#query-database #search-results .game-result {
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    list-style-type: none;
+    border: 2px dashed red;
+}
