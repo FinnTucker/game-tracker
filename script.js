@@ -64,11 +64,10 @@ searchInput.addEventListener("input", (e) => {
 // display rawg api search results
 document.getElementById("rawg-api-search").addEventListener("submit", (e) => {
   e.preventDefault();
-
   const title = document.getElementById("game-search").value.trim();
-  const platform = document.getElementById("platforms").value;
-  const url = `https://api.rawg.io/api/games?key=${API_KEY}&search=${encodeURIComponent(title)}`;
-  console.log("API URL: ", url);
+  // const platform = document.getElementById("platforms").value;
+  const url = buildApiUrl(title);
+
   // fetch data from the API
   fetch(url)
     .then(response => response.json())
@@ -77,35 +76,49 @@ document.getElementById("rawg-api-search").addEventListener("submit", (e) => {
       const resultsContainer = document.getElementById("search-results");
       resultsContainer.innerHTML="";
 
-
       data.results.forEach((game) => {
-      const gameDiv = document.createElement("div");
-      gameDiv.className = "game-result";
-
-      const platformList = game.parent_platforms 
-        ? game.parent_platforms.map(p => p.platform.name)
-        : [];
-
-      gameDiv.innerHTML=`
-      <h3>${game.name}</h3>
-      <img src="${game.background_image}" alt="${game.name} cover" width="300"/>
-      <p>Released: ${game.released || "N/A"}</p>
-      <p>Metacritic: ${game.metacritic !== null ? game.metacritic : "N/A"}</p>
-      <p>Platforms: ${platformList.join(", ")}</p>
-
-      <button class='add-from-api'
-        data-title='${game.name}'
-        data-img="${game.background_image}"
-        data-platform='${JSON.stringify(platformList)}'
-        data-metacritic="${game.metacritic !== null ? game.metacritic : 'N/A'}"
-        >Add to My List</button>
-      `;
+      const gameDiv = createGameResultElement(game);
       resultsContainer.appendChild(gameDiv);
       console.log(gameDiv)
     });
     })
     .catch(err => console.error("Error fetching from RAWG API:", err));
 });
+
+function buildApiUrl(title) {
+  const url = `https://api.rawg.io/api/games?key=${API_KEY}&search=${encodeURIComponent(title)}`;
+  console.log("API URL: ", url);
+  return url;
+}
+
+function createGameResultElement(game) {
+  const gameDiv = document.createElement("div");
+  gameDiv.className = "game-result";
+
+  const platformList = game.parent_platforms
+    ? game.parent_platforms.map(p => p.platform.name)
+    : [];
+    gameDiv.innerHTML=`
+    <h3>${game.name}</h3>
+    <img src="${game.background_image}" alt="${game.name} cover" width="300"/>
+    <p>Released: ${game.released || "N/A"}</p>
+    <p>Metacritic: ${game.metacritic !== null ? game.metacritic : "N/A"}</p>
+    <p>Platforms: ${platformList.join(", ")}</p>
+
+    <button class='add-from-api'
+      data-title='${game.name}'
+      data-img="${game.background_image}"
+      data-platform='${JSON.stringify(platformList)}'
+      data-metacritic="${game.metacritic !== null ? game.metacritic : 'N/A'}"
+      >Add to My List</button>
+    `;    
+  return gameDiv;
+}
+
+function renderSearchResults(results) {
+
+}
+
 
 //add item from api search to user list
 document.getElementById("search-results").addEventListener("click", (e) => {
@@ -136,7 +149,6 @@ document.getElementById("search-results").addEventListener("click", (e) => {
     alert(`"${title}" was added to your list.`)
   }
 });
-
 
 // Listen for submit events on the form
 form.addEventListener("submit", (e) => {
@@ -172,32 +184,19 @@ function saveGames() {
   localStorage.setItem("games", JSON.stringify(games));
 }
 
-function createDelButton()
-{
-  // create a delete button for game elements in the list
-    const delButton = document.createElement("button");
-    // set text content of button
-    delButton.textContent = "Delete";
-    delButton.classList.add("remove-button");
-    return delButton;
-}
-function createdetailsButton()
-{
- const detailsButton = document.createElement("button");   
- detailsButton.textContent= "Details";
- detailsButton.classList.add("details-button");
- return detailsButton;
-}
-
 // Display games on the page
 function renderGames(gamesToRender = games) {
   list.innerHTML='';
-  // iterate through the games array
   gamesToRender.forEach((game, index) => {
-    // create a list element
-    const li = document.createElement("li");
-    // set the text content of the object
-    
+    const li = createGameListItem(game);
+    bindDeleteButton(li, index);
+    bindDetailsButton(li, game);
+    list.appendChild(li);
+  }); 
+}
+
+function createGameListItem(game) {
+  const li = document.createElement("li");
   li.innerHTML = `
   <strong>${game.title}</strong> (${game.platform})<br/>
   ${game.background_image ? `<img src="${game.background_image}" alt="${game.title} cover" width="300"/>` : ""}<br/>
@@ -205,45 +204,63 @@ function renderGames(gamesToRender = games) {
   My Review: ${game.review} <br/>
   Metascore: ${game.metacritic} <br/>
   `;
-
-    // create a delete button for each game
-    const delButton = createDelButton();
-    delButton.onclick = () => {
-      games.splice(index, 1);
-      saveGames();
-      renderGames();
-    };
-    // add delete button to li object
-    li.appendChild(delButton);
-
-    const detailsButton = createdetailsButton();
-    var modal = document.getElementById("edit-modal");
-    var span = document.getElementsByClassName("close")[0];
-
-    detailsButton.onclick = function() {
-      document.getElementById("modal-title").textContent=game.title;
-      document.getElementById("modal-platform").textContent=game.platform;
-      document.getElementById("modal-metascore").textContent=game.metacritic;
-      const modalImage = document.getElementById("modal-image");
-      if (game.background_image) {
-        modalImage.src = game.background_image;
-        modalImage.alt = `${game.title} cover`;
-        modalImage.style.display="block";
-      } else {
-        modalImage.style.display="none";
-      }
-      modal.style.display="block";
-    }
-    span.onclick = function() {
-      modal.style.display="none";
-    }
-
-    li.appendChild(detailsButton)
-    // add li object to list
-    list.appendChild(li);
-  });
+  return li;
+}
+// creates a 'delete' button element
+function createDelButton() {
+  // create a delete button for game elements in the list
+    const delButton = document.createElement("button");
+    // set text content of button
+    delButton.textContent = "Delete";
+    delButton.classList.add("remove-button");
+    return delButton;
 }
 
+// binds functionality of delete button to
+// delete list item at specified index and reload
+// games list
+function bindDeleteButton(li, index) {
+  // create a delete button for each game
+  const delButton = createDelButton();
+  delButton.onclick = () => {
+    games.splice(index, 1);
+    saveGames();
+    renderGames();
+  };
+  // add delete button to li object
+  li.appendChild(delButton);
+}
+
+function createdetailsButton() {
+ const detailsButton = document.createElement("button");   
+ detailsButton.textContent= "Details";
+ detailsButton.classList.add("details-button");
+ return detailsButton;
+}
+
+function bindDetailsButton(li, game) {
+  const detailsButton = createdetailsButton();
+  const modal = document.getElementById("edit-modal");
+  const span = document.getElementsByClassName("close")[0];
+  detailsButton.onclick = function() {
+  document.getElementById("modal-title").textContent=game.title;
+  document.getElementById("modal-platform").textContent=game.platform;
+  document.getElementById("modal-metascore").textContent=game.metacritic;
+  const modalImage = document.getElementById("modal-image");
+  if (game.background_image) {
+    modalImage.src = game.background_image;
+    modalImage.alt = `${game.title} cover`;
+    modalImage.style.display="block";
+  } else {
+    modalImage.style.display="none";
+  }
+  modal.style.display="block";
+  }
+    span.onclick = function() {
+    modal.style.display="none";
+  }
+    li.appendChild(detailsButton)
+}
 
 //show the list of games in localStorage, hide the 'add a game' section
 document.getElementById("view-list").addEventListener("click", () => {
