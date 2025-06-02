@@ -11,21 +11,8 @@
     <p>This is a place to keep track of games played and my thoughts. I need to add an all time favourite games ranking page</p>
     <nav>
       <button id="view-list">View Games</button>
-      <button id="add-game">Add Game</button>
       <button id="add-game-from-API">Query RAWG Database</button>
     </nav>
-
-  <div id="add-game-section" style="display:block">
-    <h2> Add A Game </h2>
-      <form id="game-form">
-        <input type="text" id="title" placeholder="Game title" required/>
-        <input type="text" id="platform" placeholder="Platform" />
-        <input type="number" id="rating" min="1" max="5" placeholder="Rating (1-5)"/>
-        <textarea id="review" placeholder="Write a short review..."></textarea>
-        <input type="checkbox" id="checkbox-result"/>
-        <button type="submit">Add Game</button>
-      </form>
-  </div>
 
   <div id="query-database" style="display:none">
     <h2>Search The Database</h2>

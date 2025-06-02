@@ -38,7 +38,7 @@ function loadGames(url) {
 });
 };
 
-// Listen for input events on the search field in 'add-game-section'
+// Listen for input events on the search field in 'view-games'
 searchInput.addEventListener("input", (e) => {
   // Get the current input value, trim whitespace, and convert to lowercase
   const query = e.target.value.trim().toLowerCase();
@@ -134,6 +134,7 @@ function createNewGameObject(title, background_image, platform, metacritic, genr
   };
   return newGame;
 };
+
 //add item from api search to user list
 document.getElementById("search-results").addEventListener("click", (e) => {
   // if the event target classlist is the add-from-api button
@@ -156,43 +157,9 @@ document.getElementById("search-results").addEventListener("click", (e) => {
   }
 });
 
-// Listen for submit events on the form
-form.addEventListener("submit", (e) => {
-  e.preventDefault(); // Prevent the form from submitting and reloading the page
-  // Get the values input by the user for game title and platform
-  const title = document.getElementById("title").value;
-  const platform = document.getElementById("platform").value;
-  // Create a game object using the title and platform
-  const game = { 
-    title, 
-    platform, 
-    rating: rating.value,
-    review: review.value,
-  };
-  // Add the new game to the games array
-  games.push(game);
-  // Save the updated games list to localStorage
-  saveGames();
-  // Render the complete list of games (including the new one)
-  renderGames();
-  // Clear the input fields in the form
-  form.reset();
-});
-
 // Save to localStorage
 function saveGames() {
   localStorage.setItem("games", JSON.stringify(games));
-};
-
-// Display user games list
-function renderGames(gamesToRender = games) {
-  list.innerHTML='';
-  gamesToRender.forEach((game, index) => {
-    const li = createGameListItem(game);
-    bindDeleteButton(li, index);
-    bindDetailsButton(li, game);
-    list.appendChild(li);
-  }); 
 };
 
 function createGameListItem(game) {
@@ -207,6 +174,19 @@ function createGameListItem(game) {
   `;
   return li;
 };
+
+// Display user games list
+function renderGames(gamesToRender = games) {
+  list.innerHTML='';
+  gamesToRender.forEach((game, index) => {
+    const li = createGameListItem(game);
+    bindDeleteButton(li, index);
+    bindDetailsButton(li, game);
+    list.appendChild(li);
+  }); 
+};
+
+
 // creates a 'delete' button element
 function createDelButton() {
   // create a delete button for game elements in the list
@@ -272,20 +252,11 @@ function createModal(game) {
 //show the list of games in localStorage, hide the 'add a game' section
 document.getElementById("view-list").addEventListener("click", () => {
   document.getElementById("game-list-section").style.display="block";
-  document.getElementById("add-game-section").style.display="none";
-  document.getElementById("query-database").style.display="none";
-});
-
-//show the 'add a game' section, hide the list of games in localStorage
-document.getElementById("add-game").addEventListener("click", () => {
-  document.getElementById("add-game-section").style.display="block";
-  document.getElementById("game-list-section").style.display="none";
   document.getElementById("query-database").style.display="none";
 });
 
 //show the 'query RAWG database' section, hide the other sections
 document.getElementById("add-game-from-API").addEventListener("click", () => {
-  document.getElementById("add-game-section").style.display="none";
   document.getElementById("game-list-section").style.display="none";
   document.getElementById("query-database").style.display="block";
 });
