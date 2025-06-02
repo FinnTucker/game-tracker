@@ -180,8 +180,8 @@ function renderGames(gamesToRender = games) {
   list.innerHTML='';
   gamesToRender.forEach((game, index) => {
     const li = createGameListItem(game);
-    bindDeleteButton(li, index);
     bindDetailsButton(li, game);
+    bindDeleteButton(li, index);
     list.appendChild(li);
   }); 
 };
