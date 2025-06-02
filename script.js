@@ -20,15 +20,9 @@ window.onload = () => {
     games = JSON.parse(savedGames);
     renderGames();
   }
-  document.getElementById("view-list").addEventListener("click", () => {
-    document.getElementById("game-list-section").style.display = "block";
-    document.getElementById("add-game-section").style.display = "none";
-    document.getElementById("query-database").style.display = "none";
-});
 };
 
-function loadGames(url)
-{
+function loadGames(url) {
   fetch(url)
     .then(response => response.json())
     .then(data=> {
@@ -42,7 +36,7 @@ function loadGames(url)
     .catch(error => {
       console.error("Error fetching data:", error);
 });
-}
+};
 
 // Listen for input events on the search field in 'add-game-section'
 searchInput.addEventListener("input", (e) => {
@@ -89,7 +83,7 @@ function buildApiUrl(title) {
   const url = `https://api.rawg.io/api/games?key=${API_KEY}&search=${encodeURIComponent(title)}`;
   console.log("API URL: ", url);
   return url;
-}
+};
 
 function createGameResultElement(game) {
   const gameDiv = document.createElement("div");
@@ -121,12 +115,12 @@ function createGameResultElement(game) {
     button.setAttribute("data-genre", JSON.stringify(genreList));
   
   return gameDiv;
-}
+};
 
 //TODO render results from API query search
 function renderSearchResults(results) {
 
-}
+};
 
 function createNewGameObject(title, background_image, platform, metacritic, genre) {
   const newGame = {
@@ -135,11 +129,11 @@ function createNewGameObject(title, background_image, platform, metacritic, genr
     platform: platform.join(", "),
     metacritic: metacritic,
     rating: "Not rated yet",
-    review: "Not reviewed yet"
-    genre: genre.join(", ");
+    review: "Not reviewed yet",
+    genre: genre.join(", ")
   };
   return newGame;
-}
+};
 //add item from api search to user list
 document.getElementById("search-results").addEventListener("click", (e) => {
   // if the event target classlist is the add-from-api button
@@ -174,7 +168,6 @@ form.addEventListener("submit", (e) => {
     platform, 
     rating: rating.value,
     review: review.value,
-    genre
   };
   // Add the new game to the games array
   games.push(game);
@@ -189,7 +182,7 @@ form.addEventListener("submit", (e) => {
 // Save to localStorage
 function saveGames() {
   localStorage.setItem("games", JSON.stringify(games));
-}
+};
 
 // Display user games list
 function renderGames(gamesToRender = games) {
@@ -200,7 +193,7 @@ function renderGames(gamesToRender = games) {
     bindDetailsButton(li, game);
     list.appendChild(li);
   }); 
-}
+};
 
 function createGameListItem(game) {
   const li = document.createElement("li");
@@ -213,7 +206,7 @@ function createGameListItem(game) {
   Genres: ${game.genre || "N/A"} <br/>
   `;
   return li;
-}
+};
 // creates a 'delete' button element
 function createDelButton() {
   // create a delete button for game elements in the list
@@ -222,11 +215,8 @@ function createDelButton() {
     delButton.textContent = "Delete";
     delButton.classList.add("remove-button");
     return delButton;
-}
+};
 
-// binds functionality of delete button to
-// delete list item at specified index and reload
-// games list
 function bindDeleteButton(li, index) {
   // create a delete button for each game
   const delButton = createDelButton();
@@ -237,29 +227,37 @@ function bindDeleteButton(li, index) {
   };
   // add delete button to li object
   li.appendChild(delButton);
-}
+};
 
 function createdetailsButton() {
  const detailsButton = document.createElement("button");   
  detailsButton.textContent= "Details";
  detailsButton.classList.add("details-button");
  return detailsButton;
-}
+};
 
 // this function has too many responsibilities, needs refactoring
 function bindDetailsButton(li, game) {
   // create details button
   const detailsButton = createdetailsButton();
-  // get modal html element
-  const modal = document.getElementById("details-modal");
   // get span element (close button)
   const span = document.getElementsByClassName("close")[0];
   // when details button clicked, populate modal elements with text content
   detailsButton.onclick = function() {
+    const modal = createModal(game);
+    modal.style.display="block";
+    span.onclick = function() {
+      modal.style.display="none";
+    };
+  };
+    li.appendChild(detailsButton);
+};
+
+function createModal(game) {
+  const modal = document.getElementById("details-modal");
   document.getElementById("modal-title").textContent=game.title;
   document.getElementById("modal-platform").textContent=game.platform;
   document.getElementById("modal-metascore").textContent=game.metacritic;
-  // if background_image exists, set modal-image to background_image
   const modalImage = document.getElementById("modal-image");
   if (game.background_image) {
     modalImage.src = game.background_image;
@@ -268,18 +266,8 @@ function bindDetailsButton(li, game) {
   } else {
     modalImage.style.display="none";
   }
-  modal.style.display="block";
-  }
-    span.onclick = function() {
-    modal.style.display="none";
-  }
-    li.appendChild(detailsButton);
+  return modal;
 };
-
-//TODO: populate review data in modal
-document.getElementById("modal-form").addEventListener("submit", (e) => {
-
-})
 
 //show the list of games in localStorage, hide the 'add a game' section
 document.getElementById("view-list").addEventListener("click", () => {
