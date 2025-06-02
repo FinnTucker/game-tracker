@@ -1,70 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>Game Tracker</title>
-        <link rel="stylesheet" href="style.css"/>
-    </head>
-    <body>
-        <h1>Game Tracker</h1>
-        <p>This is a place to keep track of games played and my thoughts. I need to add an all time favourite games ranking page</p>
-        <nav>
-            <button id="view-list">View Games</button>
-            <button id="add-game">Add Game</button>
-            <button id="add-game-from-API">Query RAWG Database</button>
-        </nav>
+  <head>
+    <meta charset="UTF-8"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+      <title>Game Tracker</title>
+      <link rel="stylesheet" href="style.css"/>
+  </head>
+  <body>
+    <h1>Game Tracker</h1>
+    <p>This is a place to keep track of games played and my thoughts. I need to add an all time favourite games ranking page</p>
+    <nav>
+      <button id="view-list">View Games</button>
+      <button id="add-game">Add Game</button>
+      <button id="add-game-from-API">Query RAWG Database</button>
+    </nav>
 
-    <div id="add-game-section" style="display:block">
-        <h2> Add A Game </h2>
-            <form id="game-form">
-                <input type="text" id="title" placeholder="Game title" required/>
-                <input type="text" id="platform" placeholder="Platform" />
-                <input type="number" id="rating" min="1" max="5" placeholder="Rating (1-5)"/>
-                <textarea id="review" placeholder="Write a short review..."></textarea>
-                <input type="checkbox" id="checkbox-result"/>
-                <button type="submit">Add Game</button>
-            </form>
+  <div id="add-game-section" style="display:block">
+    <h2> Add A Game </h2>
+      <form id="game-form">
+        <input type="text" id="title" placeholder="Game title" required/>
+        <input type="text" id="platform" placeholder="Platform" />
+        <input type="number" id="rating" min="1" max="5" placeholder="Rating (1-5)"/>
+        <textarea id="review" placeholder="Write a short review..."></textarea>
+        <input type="checkbox" id="checkbox-result"/>
+        <button type="submit">Add Game</button>
+      </form>
+  </div>
+
+  <div id="query-database" style="display:none">
+    <h2>Search The Database</h2>
+    <div>
+    <form id="rawg-api-search">
+      <input type="text" id="game-search" placeholder="Game Title" required/>
+        <select name="platforms" id="platforms">
+          <option value="Sony">Sony</option>
+          <option value="PC">PC</option>
+          <option value="Nintendo">Nintendo</option>
+        </select>
+        <button type ="submit">Search</button>
+    </form>
     </div>
+    <h3>Search Results</h3>
+    <div id="search-results"></div>
+  </div>
 
-    <div id="query-database" style="display:none">
-        <h2>Search The Database</h2>
-        <div>
-        <form id="rawg-api-search">
-            <input type="text" id="game-search" placeholder="Game Title" required/>
-            <select name="platforms" id="platforms">
-                <option value="Sony">Sony</option>
-                <option value="PC">PC</option>
-                <option value="Nintendo">Nintendo</option>
-            </select>
-            <button type ="submit">Search</button>
-        </form>
-        </div>
-        <h3>Search Results</h3>
-        <div id="search-results"></div>
-    </div>
-
-<div id="game-list-section" style="display: none;">
+  <div id="game-list-section" style="display: none;">
     <h2> Search </h2>
     <input type="text" id="search-input" placeholder="Search for a game"/>
     <h2>My Games</h2>
     <ul id="game-list"></ul>
-</div>
+  </div>
 
-<div id="edit-modal" class="modal" style="display: none;">
+  <div id="details-modal" class="modal" style="display: none;">
     <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2 id="modal-title"></h2>
-        <img id="modal-image" width="300"/>
-        <p><strong>Platform: </strong><span id="modal-platform"></span></p>
-        <p><strong>Metascore: </strong><span id="modal-metascore"></span></p>
-        <form id="modal-form">
-            <textarea id="review" placeholder="Write a short review..."></textarea>
-            <button type="submit">Submit Review</button>
-        </form>
-
+      <span class="close">&times;</span>
+      <h2 id="modal-title"></h2>
+      <img id="modal-image" width="300"/>
+      <p><strong>Platform: </strong><span id="modal-platform"></span></p>
+      <p><strong>Metascore: </strong><span id="modal-metascore"></span></p>
+      <form id="modal-form">
+        <textarea id="review" placeholder="Write a short review..."></textarea>
+        <button type="submit">Submit Review</button>
+      </form>
     </div>
-</div>
+  </div>
         <script src="script.js"></script>
     </body>
 </html>

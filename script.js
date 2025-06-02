@@ -20,6 +20,11 @@ window.onload = () => {
     games = JSON.parse(savedGames);
     renderGames();
   }
+  document.getElementById("view-list").addEventListener("click", () => {
+    document.getElementById("game-list-section").style.display = "block";
+    document.getElementById("add-game-section").style.display = "none";
+    document.getElementById("query-database").style.display = "none";
+});
 };
 
 function loadGames(url)
@@ -39,11 +44,6 @@ function loadGames(url)
 });
 }
 
-document.getElementById("view-list").addEventListener("click", () => {
-  document.getElementById("game-list-section").style.display = "block";
-  document.getElementById("add-game-section").style.display = "none";
-});
-
 // Listen for input events on the search field in 'add-game-section'
 searchInput.addEventListener("input", (e) => {
   // Get the current input value, trim whitespace, and convert to lowercase
@@ -60,9 +60,6 @@ searchInput.addEventListener("input", (e) => {
   // Re-render the list using the filtered games
   renderGames(filteredGames);
 });
-
-//populate review data in modal
-document.getElementById("")
 
 // display rawg api search results
 document.getElementById("rawg-api-search").addEventListener("submit", (e) => {
@@ -97,11 +94,12 @@ function buildApiUrl(title) {
 function createGameResultElement(game) {
   const gameDiv = document.createElement("div");
   gameDiv.className = "game-result";
-
+  //map game genre results to array genreList
   const genreList = game.genres
     ? game.genres.map(g => g.name) 
     : [];
   console.log(genreList)
+  //map game parent platform results to array platformList
   const platformList = game.parent_platforms
     ? game.parent_platforms.map(p => p.platform.name)
     : [];
@@ -125,36 +123,37 @@ function createGameResultElement(game) {
   return gameDiv;
 }
 
+//TODO render results from API query search
 function renderSearchResults(results) {
 
 }
 
-
+function createNewGameObject(title, background_image, platform, metacritic, genre) {
+  const newGame = {
+    title,
+    background_image,
+    platform: platform.join(", "),
+    metacritic: metacritic,
+    rating: "Not rated yet",
+    review: "Not reviewed yet"
+    genre: genre.join(", ");
+  };
+  return newGame;
+}
 //add item from api search to user list
 document.getElementById("search-results").addEventListener("click", (e) => {
+  // if the event target classlist is the add-from-api button
   if (e.target.classList.contains("add-from-api")) {
+    // set attributes
     const title = e.target.dataset.title;
     const platform = JSON.parse(e.target.dataset.platform);
     const metacritic = e.target.dataset.metacritic;
     const background_image = e.target.dataset.img;
     const genre = JSON.parse(e.target.dataset.genre);
+    //create new game object
+    const newGame = createNewGameObject(title, background_image, platform, metacritic, genre);
+    console.log(newGame);
 
-    console.log(title);
-    console.log(metacritic);
-    console.log(platform);
-    console.log(background_image);
-    console.log(genre);
-
-
-    const newGame = {
-      title,
-      background_image,
-      platform: platform.join(", "),
-      rating: "Not rated yet",
-      review: "Not reviewed yet",
-      metacritic: metacritic,
-      genre: genre.join(", ")
-    };
     games.push(newGame);
     saveGames();
     renderGames();
@@ -166,11 +165,9 @@ document.getElementById("search-results").addEventListener("click", (e) => {
 // Listen for submit events on the form
 form.addEventListener("submit", (e) => {
   e.preventDefault(); // Prevent the form from submitting and reloading the page
-
   // Get the values input by the user for game title and platform
   const title = document.getElementById("title").value;
   const platform = document.getElementById("platform").value;
-  
   // Create a game object using the title and platform
   const game = { 
     title, 
@@ -179,16 +176,12 @@ form.addEventListener("submit", (e) => {
     review: review.value,
     genre
   };
-
   // Add the new game to the games array
   games.push(game);
-
   // Save the updated games list to localStorage
   saveGames();
-
   // Render the complete list of games (including the new one)
   renderGames();
-
   // Clear the input fields in the form
   form.reset();
 });
@@ -198,7 +191,7 @@ function saveGames() {
   localStorage.setItem("games", JSON.stringify(games));
 }
 
-// Display games on the page
+// Display user games list
 function renderGames(gamesToRender = games) {
   list.innerHTML='';
   gamesToRender.forEach((game, index) => {
@@ -253,14 +246,20 @@ function createdetailsButton() {
  return detailsButton;
 }
 
+// this function has too many responsibilities, needs refactoring
 function bindDetailsButton(li, game) {
+  // create details button
   const detailsButton = createdetailsButton();
-  const modal = document.getElementById("edit-modal");
+  // get modal html element
+  const modal = document.getElementById("details-modal");
+  // get span element (close button)
   const span = document.getElementsByClassName("close")[0];
+  // when details button clicked, populate modal elements with text content
   detailsButton.onclick = function() {
   document.getElementById("modal-title").textContent=game.title;
   document.getElementById("modal-platform").textContent=game.platform;
   document.getElementById("modal-metascore").textContent=game.metacritic;
+  // if background_image exists, set modal-image to background_image
   const modalImage = document.getElementById("modal-image");
   if (game.background_image) {
     modalImage.src = game.background_image;
@@ -274,8 +273,13 @@ function bindDetailsButton(li, game) {
     span.onclick = function() {
     modal.style.display="none";
   }
-    li.appendChild(detailsButton)
-}
+    li.appendChild(detailsButton);
+};
+
+//TODO: populate review data in modal
+document.getElementById("modal-form").addEventListener("submit", (e) => {
+
+})
 
 //show the list of games in localStorage, hide the 'add a game' section
 document.getElementById("view-list").addEventListener("click", () => {
@@ -296,4 +300,4 @@ document.getElementById("add-game-from-API").addEventListener("click", () => {
   document.getElementById("add-game-section").style.display="none";
   document.getElementById("game-list-section").style.display="none";
   document.getElementById("query-database").style.display="block";
-})
+});
