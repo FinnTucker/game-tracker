@@ -1,4 +1,4 @@
-const API_KEY = "ca5f2915d47a49ca9843722b14036a72"
+
 const form = document.getElementById("game-form");
 const list = document.getElementById("game-list");
 const searchInput = document.getElementById("search-input");
